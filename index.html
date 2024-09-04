@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compilatore PDF Form Personalizzato</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/downloadjs/1.4.8/download.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; }
+        form { display: flex; flex-direction: column; }
+        input, button { margin: 10px 0; padding: 5px; }
+        button { background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+        #status { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Compilatore PDF Form Personalizzato</h1>
+    <form id="pdfForm">
+        <input type="file" id="pdfFile" accept=".pdf" required>
+        <input type="text" id="verona" placeholder="Verona" required>
+        <input type="number" id="giorno" placeholder="Giorno" required min="1" max="31">
+        <input type="text" id="mese" placeholder="Mese" required>
+        <input type="number" id="anno" placeholder="Anno" required min="1900" max="2100">
+        <button type="submit">Compila PDF</button>
+    </form>
+    <div id="status"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('pdfForm');
+            const statusDiv = document.getElementById('status');
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                statusDiv.textContent = 'Compilazione PDF in corso...';
+
+                const pdfFile = document.getElementById('pdfFile').files[0];
+                const verona = document.getElementById('verona').value;
+                const giorno = document.getElementById('giorno').value;
+                const mese = document.getElementById('mese').value;
+                const anno = document.getElementById('anno').value;
+
+                if (!pdfFile) {
+                    statusDiv.textContent = 'Errore: Seleziona un file PDF.';
+                    return;
+                }
+
+                try {
+                    const existingPdfBytes = await pdfFile.arrayBuffer();
+                    const pdfDoc = await PDFLib.PDFDocument.load(existingPdfBytes);
+                    
+                    const form = pdfDoc.getForm();
+
+                    const veronaField = form.getTextField('Verona');
+                    const giornoField = form.getTextField('Giorno');
+                    const meseField = form.getTextField('Mese');
+                    const annoField = form.getTextField('Anno');
+
+                    if (veronaField) veronaField.setText(verona);
+                    if (giornoField) giornoField.setText(giorno);
+                    if (meseField) meseField.setText(mese);
+                    if (annoField) annoField.setText(anno);
+
+                    const pdfBytes = await pdfDoc.save();
+                    download(pdfBytes, "compilato.pdf", "application/pdf");
+                    statusDiv.textContent = 'PDF compilato con successo!';
+                } catch (error) {
+                    statusDiv.textContent = `Errore durante la compilazione del PDF: ${error.message}`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
