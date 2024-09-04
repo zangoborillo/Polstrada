@@ -6,87 +6,131 @@
     <title>Compilatore PDF Form Personalizzato</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
     <style>
+        :root {
+            --primary-color: #4A90E2;
+            --secondary-color: #F5A623;
+            --background-color: #F0F4F8;
+            --text-color: #333;
+            --error-color: #FF3B30;
+            --success-color: #4CD964;
+        }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f0f0f0;
-            color: #333;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
         }
         h1 {
-            font-size: 24px;
+            font-size: 28px;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            color: var(--primary-color);
         }
         form {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: grid;
+            gap: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
         }
         label {
-            display: block;
+            font-weight: 600;
             margin-bottom: 5px;
-            font-weight: bold;
+            color: var(--primary-color);
         }
         input[type="file"],
         input[type="text"],
         input[type="number"] {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
             font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        input[type="file"]:focus,
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            border-color: var(--primary-color);
+            outline: none;
         }
         button {
             width: 100%;
             padding: 15px;
-            background-color: #007AFF;
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 18px;
             font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #3A7BC8;
         }
         #status {
             margin-top: 20px;
-            padding: 10px;
-            border-radius: 5px;
+            padding: 15px;
+            border-radius: 8px;
             text-align: center;
             font-weight: bold;
+            display: none;
         }
         .success {
-            background-color: #4CD964;
+            background-color: var(--success-color);
             color: white;
         }
         .error {
-            background-color: #FF3B30;
+            background-color: var(--error-color);
             color: white;
         }
     </style>
 </head>
 <body>
-    <h1>Compilatore PDF Form Personalizzato</h1>
-    <form id="pdfForm">
-        <label for="pdfFile">Seleziona il PDF:</label>
-        <input type="file" id="pdfFile" accept=".pdf" required>
-        
-        <label for="verona">Verona:</label>
-        <input type="text" id="verona" required>
-        
-        <label for="giorno">Giorno:</label>
-        <input type="number" id="giorno" required min="1" max="31">
-        
-        <label for="mese">Mese:</label>
-        <input type="text" id="mese" required>
-        
-        <label for="anno">Anno:</label>
-        <input type="number" id="anno" required min="1900" max="2100">
-        
-        <button type="submit">Compila PDF</button>
-    </form>
-    <div id="status"></div>
+    <div class="container">
+        <h1>Compilatore PDF Form</h1>
+        <form id="pdfForm">
+            <div class="form-group">
+                <label for="pdfFile">Seleziona il PDF:</label>
+                <input type="file" id="pdfFile" accept=".pdf" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="verona">Verona:</label>
+                <input type="text" id="verona" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="giorno">Giorno:</label>
+                <input type="number" id="giorno" required min="1" max="31">
+            </div>
+            
+            <div class="form-group">
+                <label for="mese">Mese:</label>
+                <input type="text" id="mese" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="anno">Anno:</label>
+                <input type="number" id="anno" required min="1900" max="2100">
+            </div>
+            
+            <button type="submit">Compila PDF</button>
+        </form>
+        <div id="status"></div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -95,6 +139,7 @@
 
             form.addEventListener('submit', async function(e) {
                 e.preventDefault();
+                statusDiv.style.display = 'block';
                 statusDiv.className = '';
                 statusDiv.textContent = 'Compilazione PDF in corso...';
 
@@ -154,5 +199,6 @@
             }
         });
     </script>
+</div>
 </body>
 </html>
